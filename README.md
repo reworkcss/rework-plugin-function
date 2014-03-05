@@ -1,4 +1,4 @@
-rework-plugin-inline
+rework-plugin-function
 ====================
 
-inline() plugin for rework, formerly included in core
+function() plugin for rework, formerly included in core
