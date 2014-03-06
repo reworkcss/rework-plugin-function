@@ -1,5 +1,6 @@
 
 var rework = require('rework')
+  , func = require('../')
   , fs = require('fs')
   , assert = require('assert')
   , read = fs.readFileSync;
@@ -11,7 +12,7 @@ function fixture(name) {
 describe('.function()', function(){
   it('should add custom function', function(){
     rework(fixture('function'))
-      .use(rework.function({ fonts: fonts }))
+      .use(func({ fonts: fonts }))
       .toString()
       .should.equal(fixture('function.out'));
 
@@ -34,14 +35,14 @@ describe('.function()', function(){
     }
 
     rework(fixture('function.nested'))
-      .use(rework.function(functions))
+      .use(func(functions))
       .toString()
       .should.equal(fixture('function.nested.out'));
   })
 
   it('should prevent infinite loop', function() {
     rework(fixture('function.infinite-loop'))
-      .use(rework.function({url: prefixurl}))
+      .use(func({url: prefixurl}))
       .toString()
       .should.equal(fixture('function.infinite-loop.out'));
 

@@ -16,7 +16,7 @@ module.exports = function(functions, args) {
   return function(style){
     var functionMatcher = functionMatcherBuilder(Object.keys(functions).join('|'));
 
-    visit.declarations(style, function(declarations){
+    visit(style, function(declarations){
       func(declarations, functions, functionMatcher, args);
     });
   }
