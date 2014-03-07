@@ -28,9 +28,6 @@
     "mocha": "^1.17.1",
     "rework": "^0.20.2"
   },
-  "peerDependencies": {
-    "rework": "^0.20.2"
-  },
   "dependencies": {
     "rework-visit": "^1.0.0"
   }

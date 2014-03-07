@@ -4,8 +4,6 @@
  */
 
 var visit = require('rework-visit');
-var utils = require('rework/lib/utils');
-var strip = utils.stripQuotes;
 
 /**
  * Define custom function.
@@ -92,3 +90,12 @@ function getRandomString() {
   return Math.random().toString(36).slice(2);
 }
 
+/**
+ * strip quotes from string
+ * @api private
+ */
+
+function strip(str) {
+    if ('"' == str[0] || "'" == str[0]) return str.slice(1, -1);
+    return str;
+}
