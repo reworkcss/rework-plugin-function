@@ -1,6 +1,8 @@
 rework-plugin-function
 ====================
 
+[![Build Status](https://travis-ci.org/reworkcss/rework-plugin-function.png)](https://travis-ci.org/reworkcss/rework-plugin-function)
+
 function() plugin for rework, formerly included in core
 
 Add user-defined CSS functions.
