@@ -34,11 +34,11 @@ function func(declarations, functions, functionMatcher, parseArgs) {
   // ISSUE#2: sass gen comments cause error
   if (!declarations) return;
   if (false !== parseArgs) parseArgs = true;
-  
+
   declarations.forEach(function(decl){
     if ('comment' == decl.type) return;
     var generatedFuncs = [], result, generatedFunc;
-    
+
     while (decl.value.match(functionMatcher)) {
       decl.value = decl.value.replace(functionMatcher, function(_, name, args){
         if (parseArgs) {
@@ -48,7 +48,7 @@ function func(declarations, functions, functionMatcher, parseArgs) {
         }
         // Ensure result is string
         result = '' + functions[name].apply(decl, args);
-        
+
         // Prevent fall into infinite loop like this:
         //
         // {
@@ -63,12 +63,11 @@ function func(declarations, functions, functionMatcher, parseArgs) {
         return result;
       });
     }
-    
+
     generatedFuncs.forEach(function(func) {
       decl.value = decl.value.replace(func.to, func.from);
     })
   });
-
 }
 
 /**
