@@ -31,6 +31,8 @@ module.exports = function(functions, args) {
  */
 
 function func(declarations, functions, functionMatcher, parseArgs) {
+  // ISSUE#2: sass gen comments cause error
+  if (!declarations) return;
   if (false !== parseArgs) parseArgs = true;
 
   declarations.forEach(function(decl){
