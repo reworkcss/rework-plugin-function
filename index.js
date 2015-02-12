@@ -31,6 +31,7 @@ module.exports = function(functions, args) {
  */
 
 function func(declarations, functions, functionMatcher, parseArgs) {
+  if (!declarations) return;
   if (false !== parseArgs) parseArgs = true;
 
   declarations.forEach(function(decl){
