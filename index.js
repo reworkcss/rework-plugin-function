@@ -36,7 +36,22 @@ function func(declarations, functions, functionMatcher, parseArgs) {
 
   declarations.forEach(function(decl){
     if ('comment' == decl.type) return;
-    var generatedFuncs = [], result, generatedFunc;
+    var replacedFunctions = [], replacedValues = [], result, replacedFunc, replacedValue;
+
+    var colorFunctionRegexPart = "(?:rgb|hsl)a?";
+    var colorMatcher = functionMatcherBuilder(colorFunctionRegexPart);
+    var replaceColorValues = function(value_str){
+      while (value_str.match(colorMatcher)) {
+        value_str = value_str.replace(colorMatcher, function(color, name, args){
+          replacedValue = {from: color, to: getRandomIdentifier(name)};
+          replacedValues.push(replacedValue);
+          return replacedValue.to;
+        });
+      }
+      return value_str;
+    };
+
+    decl.value = replaceColorValues(decl.value);
 
     while (decl.value.match(functionMatcher)) {
       decl.value = decl.value.replace(functionMatcher, function(_, name, args){
@@ -45,8 +60,16 @@ function func(declarations, functions, functionMatcher, parseArgs) {
         } else {
           args = [strip(args)];
         }
+        args = args.map(function(arg){
+          replacedValues.forEach(function(func) {
+            arg = arg.replace(func.to, func.from);
+          });
+          return arg;
+        });
         // Ensure result is string
         result = '' + functions[name].apply(decl, args);
+
+        result = replaceColorValues(result);
 
         // Prevent fall into infinite loop like this:
         //
@@ -56,16 +79,21 @@ function func(declarations, functions, functionMatcher, parseArgs) {
         //   }
         // }
         //
-        generatedFunc = {from: name, to: name + getRandomString()};
-        result = result.replace(functionMatcherBuilder(name), generatedFunc.to + '($2)');
-        generatedFuncs.push(generatedFunc);
+        replacedFunc = {from: name, to: getRandomIdentifier(name)};
+        result = result.replace(functionMatcherBuilder(name), replacedFunc.to + '($2)');
+        replacedFunctions.push(replacedFunc);
         return result;
       });
     }
 
-    generatedFuncs.forEach(function(func) {
+    replacedFunctions.forEach(function(func) {
       decl.value = decl.value.replace(func.to, func.from);
-    })
+    });
+
+    replacedValues.forEach(function(func) {
+      decl.value = decl.value.replace(func.to, func.from);
+    });
+
   });
 }
 
@@ -82,13 +110,13 @@ function functionMatcherBuilder(name) {
 }
 
 /**
- * get random string
+ * Generate a random string to use as an identifier replacing a function
  *
  * @api private
  */
 
-function getRandomString() {
-  return Math.random().toString(36).slice(2);
+function getRandomIdentifier(name) {
+  return name + Math.random().toString(36).slice(2);
 }
 
 /**

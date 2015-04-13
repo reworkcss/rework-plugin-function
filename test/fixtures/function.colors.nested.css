@@ -1,0 +1,4 @@
+.nested-color-calculation {
+  background-color: alpha(mix(#333, #FFF, 0.4), 0.8);
+}
+

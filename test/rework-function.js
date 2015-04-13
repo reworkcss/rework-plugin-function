@@ -6,7 +6,10 @@ var rework = require('rework')
   , read = fs.readFileSync;
 
 function fixture(name) {
-  return read('test/fixtures/' + name + '.css', 'utf8').trim();
+  return read('test/fixtures/' + name + '.css', 'utf8')
+    .trim()
+    .replace(/\r\n/g, "\n")
+    .replace(/\t/g, "  ");
 }
 
 describe('.function()', function(){
@@ -48,6 +51,42 @@ describe('.function()', function(){
 
     function prefixurl(path) {
       return 'url(' + '/some/prefix' + path + ')';
+    }
+  })
+  
+  it('should support (function-like) color values as parameters', function() {
+    
+    rework(fixture('function.colors'))
+      .use(func({"ugly-border": uglyBorder}))
+      .toString()
+      .should.equal(fixture('function.colors.out'));
+
+    function uglyBorder(top, right, bottom, left){
+      return top + ' ' + right + ' ' + bottom + ' ' + left;
+    }
+  })
+  
+  it('should support (function-like) color values nested in parameters', function() {
+    
+    rework(fixture('function.colors.nested'))
+      .use(func({mix: mix, alpha: alpha}))
+      .toString()
+      .should.equal(fixture('function.colors.nested.out'));
+
+    function mix(colorA, colorB, x){
+      if(colorA === '#333' && colorB === '#FFF' && x == 0.4){
+        return 'rgb(132, 132, 132)';
+      }else{
+        throw new Error('Unexpected arguments to mix(): ' + [colorA, colorB, x]);
+      }
+    }
+
+    function alpha(color, x){
+      if(color === 'rgb(132, 132, 132)' && x == 0.8){
+        return 'rgba(132, 132, 132, 0.8)';
+      }else{
+        throw new Error('Unexpected arguments to alpha(): ' + [color, x]);
+      }
     }
   })
 })
